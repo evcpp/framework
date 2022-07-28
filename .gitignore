@@ -1,2 +1,2 @@
 *.o
-.\api\evcppapi.a
+api/evcppapi.a
