@@ -24,7 +24,7 @@ COMPILER = $(PATH_PREFIX)$(COMPILER_PREFIX)gcc
 AR = $(PATH_PREFIX)$(COMPILER_PREFIX)ar
 
 .DEFAULT: evcppapi.a
-$(dir)/avcppapi.a: $(OBJS)
+$(dir)/evcppapi.a: $(OBJS)
 	$(AR) rcs $@ $^
 
 %.o: %.cpp
