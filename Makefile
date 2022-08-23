@@ -1,34 +1,32 @@
-# Get list of .cpp files to compile
-SRCS = $(wildcard *.cpp) 
-SRCS += $(wildcard src/**/.cpp include/**/*.cpp) 
-SRCS += $(wildcard include/**/*.cpp) 
-SRCS += $(wildcard firmware_headers/**/*.cpp)
-
-# Get list of .o (object) files to link
-OBJS = $(patsubst %.cpp,%.o,$(SRCS))
-
-# Compiler flags
-CFLAGS = -fno-strict-aliasing -fwrapv -Wall -Wextra  -Wno-unused-parameter
-
-# Dir where to store build result
-dir = api
-
-# Specify paths and "os based" commands
+# platform based constants and comands
 ifeq ($(OS),Windows_NT)
 	PATH_PREFIX = C:/arm-gcc/bin/
 	COMPILER_PREFIX = arm-evcpp-linux-gnueabi-
-	CLEAR_COMMAND = del /Q /F /S  .\src\*.o .\firmware_headers\*.o .\api\*.a .\*.o
+	CLEAN_COMMAND = del /Q /F /S  .\src\*.o .\firmware_headers\*.o .\api\*.a .\*.o
 endif
 
-COMPILER = $(PATH_PREFIX)$(COMPILER_PREFIX)gcc
-AR = $(PATH_PREFIX)$(COMPILER_PREFIX)ar
+COMPILER = $(PATH_PREFIX)$(COMPILER_PREFIX)g++
+LINKER = $(PATH_PREFIX)$(COMPILER_PREFIX)ar
+
+SRCS = $(wildcard *.cpp) 
+SRCS += $(wildcard src/**/*.cpp include/**/*.cpp src/*.cpp) 
+SRCS += $(wildcard include/**/*.cpp) 
+SRCS += $(wildcard firmware_headers/**/*.cpp)
+
+OBJS = $(patsubst %.cpp,%.o,$(SRCS))
+
+COMPILER_FLAGS = -fno-strict-aliasing -fwrapv -Wall -Wextra  -Wno-unused-parameter
+
+# CFLAGS += -Wpointer-sign
+# CFLAGS += -fpermissive
 
 .DEFAULT: evcppapi.a
-$(dir)/evcppapi.a: $(OBJS)
-	$(AR) rcs $@ $^
+api/evcppapi.a: $(OBJS)
+	$(LINKER) rcs $@ $^
 
 %.o: %.cpp
-	$(COMPILER) -Os $(CFLAGS) -c $< -o $@
+	$(COMPILER) -Os $(COMPILER_FLAGS) -c $< -o $@
 
+.PHONY: clean
 clean:
-	$(CLEAR_COMMAND)
+	$(CLEAN_COMMAND)
